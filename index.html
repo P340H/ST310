@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ST310 - แบบจำลองการควบคุมการเคลื่อนไหวของหุ่นยนต์</title>
+
+  <!-- Google Fonts & Tailwind CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen p-4 md:p-8 flex flex-col items-center justify-center">
+
+  <main class="w-full max-w-4xl space-y-4">
+    
+    <!-- Status Toast Alert -->
+    <div id="statusToast" class="hidden transition-all duration-300 p-3 rounded-xl text-xs font-semibold text-center border shadow-sm"></div>
+
+    <!-- Header Bar -->
+    <header class="glass-card rounded-2xl p-4 md:p-5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="p-3 bg-cyan-500/10 rounded-xl text-cyan-600">
+          <i data-lucide="bot" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-slate-800">ควบคุมผ่าน Website</h1>
+          <p class="text-xs text-slate-500">กลุ่มโครงงาน ST310</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Visualizer Card -->
+      <section class="lg:col-span-6 glass-card rounded-2xl p-6 flex flex-col items-center justify-between min-h-[360px]">
+        <div class="w-full flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Arm Visualizer</span>
+          <div class="flex gap-2">
+            <span id="s1Badge" class="px-2.5 py-1 text-xs font-mono font-semibold bg-cyan-100 text-cyan-700 rounded-lg">0°</span>
+            <span id="s2Badge" class="px-2.5 py-1 text-xs font-mono font-semibold bg-indigo-100 text-indigo-700 rounded-lg">90°</span>
+          </div>
+        </div>
+
+        <!-- SVG Visualizer -->
+        <div class="relative w-full max-w-[280px] h-[240px] flex items-center justify-center">
+          <svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-md">
+            <defs>
+              <linearGradient id="armGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#0284c7" />
+                <stop offset="50%" stop-color="#38bdf8" />
+                <stop offset="100%" stop-color="#0284c7" />
+              </linearGradient>
+              <linearGradient id="baseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#64748b" />
+                <stop offset="100%" stop-color="#334155" />
+              </linearGradient>
+              <linearGradient id="clawGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#475569" />
+                <stop offset="100%" stop-color="#1e293b" />
+              </linearGradient>
+            </defs>
+
+            <!-- Base Platform (ฐานยึดแบบคงที่) -->
+            <rect x="60" y="195" width="120" height="15" rx="4" fill="url(#baseGrad)" />
+            <path d="M85,195 L95,180 L145,180 L155,195 Z" fill="#475569" />
+            <circle cx="120" cy="180" r="16" fill="#1e293b" stroke="#0ea5e9" stroke-width="2.5" />
+
+            <!-- Rotating Arm Group (หมุนตาม Servo 1) -->
+            <g id="svgArmGroup" class="arm-joint">
+              <!-- Main Arm Shaft -->
+              <rect x="113" y="60" width="14" height="120" rx="7" fill="url(#armGrad)" />
+              <line x1="120" y1="75" x2="120" y2="165" stroke="#e0f2fe" stroke-width="2" stroke-dasharray="4 3" />
+              
+              <!-- Bottom Joint Cap -->
+              <circle cx="120" cy="180" r="8" fill="#38bdf8" />
+
+              <!-- Wrist Joint -->
+              <circle cx="120" cy="60" r="13" fill="#0f172a" stroke="#38bdf8" stroke-width="2" />
+              <circle cx="120" cy="60" r="5" fill="#0ea5e9" />
+
+              <!-- Gripper Head Mount -->
+              <rect x="92" y="44" width="56" height="12" rx="3" fill="#334155" stroke="#475569" stroke-width="1" />
+              <rect x="111" y="38" width="18" height="18" rx="2" fill="#0284c7" />
+
+              <!-- Left Jaw Claw -->
+              <path id="svgJawLeft" class="gripper-jaw-left" 
+                    d="M 104,44 L 104,24 Q 104,10 117,8 L 115,14 Q 109,16 109,26 L 109,44 Z" 
+                    fill="url(#clawGrad)" stroke="#38bdf8" stroke-width="1" />
+
+              <!-- Right Jaw Claw -->
+              <path id="svgJawRight" class="gripper-jaw-right" 
+                    d="M 136,44 L 136,24 Q 136,10 123,8 L 125,14 Q 131,16 131,26 L 131,44 Z" 
+                    fill="url(#clawGrad)" stroke="#38bdf8" stroke-width="1" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- Telemetry Status -->
+        <div class="w-full grid grid-cols-2 gap-3 mt-2 text-xs font-mono">
+          <div class="bg-slate-100/80 p-2.5 rounded-xl border border-slate-200/60">
+            <span class="text-slate-400 block mb-1">SERVO 1 (ARM)</span>
+            <span id="telemetryS1" class="font-bold text-slate-700">0° (UP)</span>
+          </div>
+          <div class="bg-slate-100/80 p-2.5 rounded-xl border border-slate-200/60">
+            <span class="text-slate-400 block mb-1">SERVO 2 (GRIPPER)</span>
+            <span id="telemetryS2" class="font-bold text-slate-700">90° (OPEN)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Control Panel Card -->
+      <section class="lg:col-span-6 glass-card rounded-2xl p-6 flex flex-col justify-between space-y-6">
+        
+        <!-- Preset Action Buttons -->
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-3">Quick Actions</label>
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="handleGrab()" class="cyber-btn py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl shadow-sm flex items-center justify-center gap-2">
+              <i data-lucide="hand-grab" class="w-4 h-4"></i>
+              <span>หนีบวัตถุ (Grab)</span>
+            </button>
+            <button onclick="handleRelease()" class="cyber-btn py-3 px-4 bg-rose-600 hover:bg-rose-700 text-white font-medium rounded-xl shadow-sm flex items-center justify-center gap-2">
+              <i data-lucide="hand" class="w-4 h-4"></i>
+              <span>ปล่อยวัตถุ (Release)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Servo Sliders & Presets -->
+        <div class="space-y-5">
+          <!-- Servo 1 Slider -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm">
+              <span class="font-semibold text-slate-700">Servo 1 (แขน)</span>
+              <span id="sliderValS1" class="font-mono font-bold text-cyan-600">0°</span>
+            </div>
+            <input type="range" id="sliderS1" min="0" max="90" value="0" 
+                   oninput="onSliderS1Input(this.value)" 
+                   onchange="sendCustomS1()"
+                   class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
+            <div class="flex gap-2 pt-1">
+              <button onclick="handleS1(0)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">0° (ตั้งขึ้น)</button>
+              <button onclick="handleS1(40)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">40°</button>
+              <button onclick="handleS1(90)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">90° (ยกลง)</button>
+            </div>
+          </div>
+
+          <!-- Servo 2 Slider -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm">
+              <span class="font-semibold text-slate-700">Servo 2 (มือ)</span>
+              <span id="sliderValS2" class="font-mono font-bold text-indigo-600">90°</span>
+            </div>
+            <input type="range" id="sliderS2" min="0" max="90" value="90" 
+                   oninput="onSliderS2Input(this.value)" 
+                   onchange="sendCustomS2()"
+                   class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+            <div class="flex gap-2 pt-1">
+              <button onclick="handleS2(0)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">0° (หนีบ)</button>
+              <button onclick="handleS2(45)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">45°</button>
+              <button onclick="handleS2(90)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">90° (อ้า)</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
