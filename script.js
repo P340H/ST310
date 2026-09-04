@@ -6,7 +6,7 @@ const WEBHOOK_URL_2 = "https://io.adafruit.com/api/v2/webhooks/feed/PcWvUfJky5r8
 const S1_OFFSET = 0;
 
 // Global State
-let currentS1 = 0;
+let currentS1 = 15;
 let currentS2 = 90;
 
 function vibrate() {
@@ -202,7 +202,7 @@ async function handleRelease() {
     try {
         await handleS1(15);
         await new Promise(r => setTimeout(r, 600));
-        await handleS2(90);
+        await handleS2(45);
 
         showStatus(
             'ทำรายการปล่อยวัตถุเรียบร้อย (Released)',
@@ -220,5 +220,5 @@ window.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
 
-    updateVisualizer(15, 90);
+    updateVisualizer(15, 45);
 });

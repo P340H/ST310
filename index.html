@@ -146,9 +146,8 @@
                    onchange="sendCustomS1()"
                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
             <div class="flex gap-2 pt-1">
-              <button onclick="handleS1(15)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">15° (ตั้งขึ้น)</button>
-              <button onclick="handleS1(40)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">40°</button>
-              <button onclick="handleS1(90)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">90° (ยกลง)</button>
+              <button onclick="handleS1(15)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">ตั้ง</button>
+              <button onclick="handleS1(90)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">ลง</button>
             </div>
           </div>
 
@@ -158,14 +157,13 @@
               <span class="font-semibold text-slate-700">Servo 2 (มือ)</span>
               <span id="sliderValS2" class="font-mono font-bold text-indigo-600">90°</span>
             </div>
-            <input type="range" id="sliderS2" min="0" max="90" value="90" 
+            <input type="range" id="sliderS2" min="0" max="45" value="45" 
                    oninput="onSliderS2Input(this.value)" 
                    onchange="sendCustomS2()"
                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
             <div class="flex gap-2 pt-1">
-              <button onclick="handleS2(0)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">0° (หนีบ)</button>
-              <button onclick="handleS2(45)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">45°</button>
-              <button onclick="handleS2(90)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">90° (อ้า)</button>
+              <button onclick="handleS2(0)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">หนีบ</button>
+              <button onclick="handleS2(45)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">อ้า</button>
             </div>
           </div>
         </div>
