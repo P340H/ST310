@@ -200,7 +200,7 @@ async function handleRelease() {
     setButtonsDisabled(true);
 
     try {
-        await handleS1(0);
+        await handleS1(15);
         await new Promise(r => setTimeout(r, 600));
         await handleS2(90);
 
@@ -220,5 +220,5 @@ window.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
 
-    updateVisualizer(0, 90);
+    updateVisualizer(15, 90);
 });

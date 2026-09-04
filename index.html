@@ -106,7 +106,7 @@
         <div class="w-full grid grid-cols-2 gap-3 mt-2 text-xs font-mono">
           <div class="bg-slate-100/80 p-2.5 rounded-xl border border-slate-200/60">
             <span class="text-slate-400 block mb-1">SERVO 1 (ARM)</span>
-            <span id="telemetryS1" class="font-bold text-slate-700">0° (UP)</span>
+            <span id="telemetryS1" class="font-bold text-slate-700">15° (UP)</span>
           </div>
           <div class="bg-slate-100/80 p-2.5 rounded-xl border border-slate-200/60">
             <span class="text-slate-400 block mb-1">SERVO 2 (GRIPPER)</span>
@@ -139,14 +139,14 @@
           <div class="space-y-2">
             <div class="flex justify-between items-center text-sm">
               <span class="font-semibold text-slate-700">Servo 1 (แขน)</span>
-              <span id="sliderValS1" class="font-mono font-bold text-cyan-600">0°</span>
+              <span id="sliderValS1" class="font-mono font-bold text-cyan-600">15°</span>
             </div>
-            <input type="range" id="sliderS1" min="15" max="90" value="0" 
+            <input type="range" id="sliderS1" min="15" max="90" value="15" 
                    oninput="onSliderS1Input(this.value)" 
                    onchange="sendCustomS1()"
                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
             <div class="flex gap-2 pt-1">
-              <button onclick="handleS1(0)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">0° (ตั้งขึ้น)</button>
+              <button onclick="handleS1(15)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">15° (ตั้งขึ้น)</button>
               <button onclick="handleS1(40)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">40°</button>
               <button onclick="handleS1(90)" class="cyber-btn text-xs py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg border border-slate-200">90° (ยกลง)</button>
             </div>
